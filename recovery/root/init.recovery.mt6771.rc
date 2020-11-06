@@ -1,0 +1,72 @@
+### NOTE ###
+# must relink teed, keymaster-4-0, gatekeeper-1-0, keymaster_attestation-1-1
+
+import /trustkernel.rc
+
+on init
+    # Somehow AOSP build system hasn't provided a symlink here
+    symlink /system_root/system /system
+    # Create a more standard /dev/block layout for our scripts
+    symlink /dev/block/platform/bootdevice /dev/block/bootdevice
+
+    mkdir /vendor/lib64 0700 root root
+    mkdir /vendor/lib64/hw 0700 root root
+    symlink /vendor/manifest.xml /system_root/system/manifest.xml
+    symlink /sbin/gatekeeper.mt6771.so /vendor/lib64/hw/gatekeeper.mt6771.so
+    start hwservicemanager
+    setprop crypto.ready 1
+
+on fs
+    export ANDROID_ROOT /system_root
+
+on post-fs
+    # Support A/B feature for EMMC and UFS boot region
+    symlink /dev/block/sda /dev/block/mmcblk0boot0
+    symlink /dev/block/sdb /dev/block/mmcblk0boot1
+    symlink /dev/block/mmcblk0boot0 /dev/block/platform/bootdevice/by-name/preloader_a
+    symlink /dev/block/mmcblk0boot1 /dev/block/platform/bootdevice/by-name/preloader_b
+
+service hwservicemanager /sbin/hwservicemanager
+    user root
+    group root
+    disabled
+    onrestart setprop hwservicemanager.ready false
+    seclabel u:r:recovery:s0
+
+service servicemanager /sbin/servicemanager
+    user root
+    group root readproc
+    disabled
+    seclabel u:r:recovery:s0
+
+service gatekeeper-1-0 /sbin/android.hardware.gatekeeper@1.0-service
+    user root
+    group root
+    disabled
+    seclabel u:r:recovery:s0
+
+service keymaster-4-0 /sbin/android.hardware.keymaster@4.0-service
+    user root
+    group root
+    disabled
+    seclabel u:r:recovery:s0
+
+service attestation-1-1 /sbin/vendor.mediatek.hardware.keymaster_attestation@1.1-service
+    interface vendor.mediatek.hardware.keymaster_attestation@1.1::IKeymasterDevice default
+    class hal
+    #user root
+    #group root
+    disabled
+    seclabel u:r:recovery:s0
+
+on property:crypto.ready=0
+    stop keymaster-4-0
+    stop gatekeeper-1-0
+    stop servicemanager
+    stop attestation-1-1
+
+on property:vendor.sys.listeners.registered=true
+    start keymaster-4-0
+    start gatekeeper-1-0
+    start servicemanager
+    start attestation-1-1
