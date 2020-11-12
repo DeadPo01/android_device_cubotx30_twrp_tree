@@ -50,12 +50,12 @@
 /product        ext4    /dev/block/mapper/product
 
 # Images
-/system_image	    emmc	/dev/block/mapper/system    flags=backup=1;flashimg=1;display="System Image"
-/vendor_image	    emmc	/dev/block/mapper/vendor    flags=backup=1;flashimg=1;display="Vendor Image"
-/product_image	    emmc	/dev/block/mapper/product   flags=backup=1;flashimg=1;display="Product Image"
+#/system_image	    emmc	/dev/block/mapper/system    flags=backup=1;flashimg=1;display="System Image"
+#/vendor_image	    emmc	/dev/block/mapper/vendor    flags=backup=1;flashimg=1;display="Vendor Image"
+#/product_image	    emmc	/dev/block/mapper/product   flags=backup=1;flashimg=1;display="Product Image"
 
 /cache		    ext4	/dev/block/platform/bootdevice/by-name/cache      flags=backup=1;wipeingui;wipeduringfactoryreset
-/data		    ext4	/dev/block/platform/bootdevice/by-name/userdata   flags=fileencryption=aes-256-cts;backup=1
+/data		    ext4	/dev/block/platform/bootdevice/by-name/userdata   flags=fileencryption=aes-256-xts:aes-256-cts;backup=1
 
 /external_sd	    auto	/dev/block/mmcblk0p1  /dev/block/mmcblk0            flags=display="external_sd";storage;wipeingui;removable;fsflags="utf8"
 /usb_otg	    auto        /dev/block/sdd4  /dev/block/sdd                     flags=display="usb-otg";storage;wipeingui;removable;fsflags="utf8"

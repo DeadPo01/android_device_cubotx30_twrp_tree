@@ -45,7 +45,8 @@ service gatekeeper-1-0 /sbin/android.hardware.gatekeeper@1.0-service
     disabled
     seclabel u:r:recovery:s0
 
-service keymaster-4-0 /sbin/android.hardware.keymaster@4.0-service
+service vendor.keymaster-4-0 /sbin/android.hardware.keymaster@4.0-service
+	interface android.hardware.keymaster@4.0::IKeymasterDevice default
     user root
     group root
     disabled
