@@ -86,6 +86,7 @@ TW_INCLUDE_CRYPTO := true
 TW_INCLUDE_FBE := true
 TW_INCLUDE_CRYPTO_FBE := true
 TW_INCLUDE_FBE_METADATA_DECRYPT := true
+USE_FSCRYPT := true
 BOARD_USES_METADATA_PARTITION := true
 
 
@@ -96,6 +97,7 @@ TARGET_RECOVERY_LCD_BACKLIGHT_PATH := \"/sys/class/leds/lcd-backlight/brightness
 TW_BRIGHTNESS_PATH := /sys/class/leds/lcd-backlight/brightness
 BOARD_USE_CUSTOM_RECOVERY_FONT := \"roboto_15x24.h\"
 TW_MAX_BRIGHTNESS := 255
+TW_DEFAULT_BRIGHTNESS := 100
 TW_THEME := portrait_hdpi
 TW_SCREEN_BLANK_ON_BOOT := true
 TW_INPUT_BLACKLIST := "hbtp_vm"

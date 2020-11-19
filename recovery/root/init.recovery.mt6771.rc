@@ -1,6 +1,3 @@
-### NOTE ###
-# must relink teed, keymaster-4-0, gatekeeper-1-0, keymaster_attestation-1-1
-
 import /trustkernel.rc
 
 on init
@@ -11,13 +8,13 @@ on init
 
     mkdir /vendor/lib64 0700 root root
     mkdir /vendor/lib64/hw 0700 root root
-    symlink /vendor/manifest.xml /system_root/system/manifest.xml
-    symlink /sbin/gatekeeper.mt6771.so /vendor/lib64/hw/gatekeeper.mt6771.so
+    symlink /vendor/manifest.xml /system_root/system/manifest.xml    
     start hwservicemanager
     setprop crypto.ready 1
 
 on fs
     export ANDROID_ROOT /system_root
+    symlink /system/etc /etc
 
 on post-fs
     # Support A/B feature for EMMC and UFS boot region
@@ -26,20 +23,21 @@ on post-fs
     symlink /dev/block/mmcblk0boot0 /dev/block/platform/bootdevice/by-name/preloader_a
     symlink /dev/block/mmcblk0boot1 /dev/block/platform/bootdevice/by-name/preloader_b
 
-service hwservicemanager /sbin/hwservicemanager
+service hwservicemanager /system/bin/hwservicemanager
     user root
     group root
     disabled
     onrestart setprop hwservicemanager.ready false
     seclabel u:r:recovery:s0
 
-service servicemanager /sbin/servicemanager
+service servicemanager /system/bin/servicemanager
     user root
     group root readproc
     disabled
     seclabel u:r:recovery:s0
 
-service gatekeeper-1-0 /sbin/android.hardware.gatekeeper@1.0-service
+service vendor.gatekeeper-1-0 /sbin/android.hardware.gatekeeper@1.0-service
+    class hal
     user root
     group root
     disabled
@@ -47,12 +45,13 @@ service gatekeeper-1-0 /sbin/android.hardware.gatekeeper@1.0-service
 
 service vendor.keymaster-4-0 /sbin/android.hardware.keymaster@4.0-service
 	interface android.hardware.keymaster@4.0::IKeymasterDevice default
+    class early_hal
     user root
     group root
     disabled
     seclabel u:r:recovery:s0
 
-service attestation-1-1 /sbin/vendor.mediatek.hardware.keymaster_attestation@1.1-service
+service keymaster_attestation-1-1 /sbin/vendor.mediatek.hardware.keymaster_attestation@1.1-service
     interface vendor.mediatek.hardware.keymaster_attestation@1.1::IKeymasterDevice default
     class hal
     #user root
@@ -61,13 +60,13 @@ service attestation-1-1 /sbin/vendor.mediatek.hardware.keymaster_attestation@1.1
     seclabel u:r:recovery:s0
 
 on property:crypto.ready=0
-    stop keymaster-4-0
-    stop gatekeeper-1-0
+    stop vendor.keymaster-4-0
+    stop vendor.gatekeeper-1-0
     stop servicemanager
-    stop attestation-1-1
+    stop keymaster_attestation-1-1
 
-on property:vendor.sys.listeners.registered=true
-    start keymaster-4-0
-    start gatekeeper-1-0
+on property:vendor.trustkernel.ready=true
+    start vendor.keymaster-4-0
+    start vendor.gatekeeper-1-0
     start servicemanager
-    start attestation-1-1
+    start keymaster_attestation-1-1
