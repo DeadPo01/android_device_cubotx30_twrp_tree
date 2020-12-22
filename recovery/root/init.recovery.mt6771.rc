@@ -1,19 +1,14 @@
 import /trustkernel.rc
 
 on init
-    # Somehow AOSP build system hasn't provided a symlink here
-    symlink /system_root/system /system
     # Create a more standard /dev/block layout for our scripts
     symlink /dev/block/platform/bootdevice /dev/block/bootdevice
 
-    mkdir /vendor/lib64 0700 root root
-    mkdir /vendor/lib64/hw 0700 root root
-    symlink /vendor/manifest.xml /system_root/system/manifest.xml    
     start hwservicemanager
     setprop crypto.ready 1
 
 on fs
-    export ANDROID_ROOT /system_root
+    #export ANDROID_ROOT /system_root
     symlink /system/etc /etc
 
 on post-fs
@@ -43,7 +38,7 @@ service vendor.gatekeeper-1-0 /sbin/android.hardware.gatekeeper@1.0-service
     disabled
     seclabel u:r:recovery:s0
 
-service vendor.keymaster-4-0 /sbin/android.hardware.keymaster@4.0-service
+service vendor.keymaster-4-0-trustkernel /sbin/android.hardware.keymaster@4.0-service.trustkernel
 	interface android.hardware.keymaster@4.0::IKeymasterDevice default
     class early_hal
     user root
@@ -66,7 +61,7 @@ on property:crypto.ready=0
     stop keymaster_attestation-1-1
 
 on property:vendor.trustkernel.ready=true
-    start vendor.keymaster-4-0
+    start vendor.keymaster-4-0-trustkernel
     start vendor.gatekeeper-1-0
     start servicemanager
     start keymaster_attestation-1-1
