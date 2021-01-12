@@ -45,14 +45,10 @@
 /vbmeta_vendor  emmc    /dev/block/platform/bootdevice/by-name/vbmeta_vendor 	flags=backup=1
 
 # Android 10 = /system and /vendor in "super" partition.
-/system		    ext4	/dev/block/mapper/system                                flags=backup=1
-/vendor         ext4    /dev/block/mapper/vendor                                flags=backup=1
-/product        ext4    /dev/block/mapper/product                               flags=backup=1
+/system		    ext4	/dev/block/mapper/system      flags=backup=1;display="System ext4"
+/vendor             ext4        /dev/block/mapper/vendor      flags=backup=1;display="Vendor ext4"
+/product            ext4        /dev/block/mapper/product     flags=backup=1;display="Product ext4"
 
-# Images
-#/system_image	    emmc	/dev/block/mapper/system    flags=backup=1;flashimg=1;display="System Image"
-#/vendor_image	    emmc	/dev/block/mapper/vendor    flags=backup=1;flashimg=1;display="Vendor Image"
-#/product_image	    emmc	/dev/block/mapper/product   flags=backup=1;flashimg=1;display="Product Image"
 
 /cache		    ext4	/dev/block/platform/bootdevice/by-name/cache      flags=backup=1;wipeingui;wipeduringfactoryreset
 /data		    ext4	/dev/block/platform/bootdevice/by-name/userdata   flags=fileencryption=aes-256-xts:aes-256-cts;backup=1

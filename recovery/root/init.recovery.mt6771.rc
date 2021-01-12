@@ -3,13 +3,13 @@ import /trustkernel.rc
 on init
     # Create a more standard /dev/block layout for our scripts
     symlink /dev/block/platform/bootdevice /dev/block/bootdevice
+    
 
-    start hwservicemanager
-    setprop crypto.ready 1
-
-on fs
-    #export ANDROID_ROOT /system_root
+on fs    
     symlink /system/etc /etc
+    start hwservicemanager
+    install_keyring
+    setprop crypto.ready 1
 
 on post-fs
     # Support A/B feature for EMMC and UFS boot region
@@ -28,6 +28,19 @@ service hwservicemanager /system/bin/hwservicemanager
 service servicemanager /system/bin/servicemanager
     user root
     group root readproc
+    disabled
+    seclabel u:r:recovery:s0
+    
+service keystore_auth /system/bin/keystore_auth
+    oneshot
+    user system
+    group root
+    disabled
+    seclabel u:r:recovery:s0
+    
+service keystore /system/bin/keystore /tmp/misc/keystore
+    user root
+    group root drmrpc readproc
     disabled
     seclabel u:r:recovery:s0
 
@@ -54,14 +67,28 @@ service keymaster_attestation-1-1 /sbin/vendor.mediatek.hardware.keymaster_attes
     disabled
     seclabel u:r:recovery:s0
 
-on property:crypto.ready=0
-    stop vendor.keymaster-4-0
-    stop vendor.gatekeeper-1-0
-    stop servicemanager
-    stop keymaster_attestation-1-1
-
 on property:vendor.trustkernel.ready=true
     start vendor.keymaster-4-0-trustkernel
     start vendor.gatekeeper-1-0
     start servicemanager
     start keymaster_attestation-1-1
+
+on property:crypto.ready=0
+    stop vendor.keymaster-4-0
+    stop vendor.gatekeeper-1-0
+    stop servicemanager
+    stop keymaster_attestation-1-1
+    
+on property:ro.crypto.state=unsupported
+    stop teed
+    stop keymaster-4-0
+    stop gatekeeper-1-0
+    stop servicemanager
+    stop hwservicemanager
+
+on property:ro.crypto.state=unencrypted
+    stop teed
+    stop keymaster-4-0
+    stop gatekeeper-1-0
+    stop servicemanager
+    stop hwservicemanager

@@ -14,6 +14,7 @@ on fs
 	symlink /mnt/vendor/protect_s /vendor/protect_s
 	symlink /mnt/vendor/nvcfg /vendor/nvcfg
 	symlink /mnt/vendor/nvdata /vendor/nvdata
+    symlink /mnt/vendor/persist /vendor/persist
 	write /proc/bootprof "tkcore: prepare system ta path"
 	chown root root /vendor/app/t6
 
