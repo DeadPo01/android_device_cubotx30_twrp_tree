@@ -5,14 +5,14 @@ on init
     symlink /dev/block/platform/bootdevice /dev/block/bootdevice
      # Somehow AOSP build system hasn't provided a symlink here
     symlink /system_root/system /system
+    symlink /system/etc /etc
     
 
 on fs    
     wait /dev/block/platform/bootdevice
     # Create a more standard /dev/block layout for our scripts
-    symlink /dev/block/platform/bootdevice /dev/block/bootdevice
-    export ANDROID_ROOT /system_root
-    symlink /system/etc /etc
+    symlink /dev/block/platform/bootdevice /dev/block/bootdevice    
+    export ANDROID_ROOT /system_root    
     start hwservicemanager
     install_keyring
     setprop crypto.ready 1
