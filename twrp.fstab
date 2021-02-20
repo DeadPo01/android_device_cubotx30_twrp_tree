@@ -46,12 +46,12 @@
 
 # Android 10 = /system and /vendor in "super" partition.
 /system		    ext4	/dev/block/mapper/system      flags=backup=1;display="System ext4"
-/vendor             ext4        /dev/block/mapper/vendor      flags=backup=1;display="Vendor ext4"
-/product            ext4        /dev/block/mapper/product     flags=backup=1;display="Product ext4"
+/vendor         ext4    /dev/block/mapper/vendor      flags=backup=1;display="Vendor ext4"
+/product        ext4    /dev/block/mapper/product     flags=backup=1;display="Product ext4"
 
 
 /cache		    ext4	/dev/block/platform/bootdevice/by-name/cache      flags=backup=1;wipeingui;wipeduringfactoryreset
 /data		    ext4	/dev/block/platform/bootdevice/by-name/userdata   flags=fileencryption=aes-256-xts:aes-256-cts;backup=1
 
-/external_sd	    auto	/dev/block/mmcblk0p1  /dev/block/mmcblk0            flags=display="external_sd";storage;wipeingui;removable;fsflags="utf8"
-/usb_otg	    auto        /dev/block/sdd4  /dev/block/sdd                     flags=display="usb-otg";storage;wipeingui;removable;fsflags="utf8"
+/external_sd	auto	/dev/block/mmcblk0p1  /dev/block/mmcblk0            flags=display="external_sd";storage;wipeingui;removable;fsflags="utf8"
+/usb_otg	    auto    /dev/block/sdd4  /dev/block/sdd                     flags=display="usb-otg";storage;wipeingui;removable;fsflags="utf8"

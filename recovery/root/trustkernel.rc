@@ -1,10 +1,10 @@
 on fs
-	mkdir /mnt/vendor 0700 root root
+	mkdir /mnt/vendor 0755 root root
 	mkdir /mnt/vendor/protect_f 0700 root root
 	mkdir /mnt/vendor/protect_s 0700 root root
 	mkdir /mnt/vendor/nvdata 0700 root root
 	mkdir /mnt/vendor/nvcfg 0700 root root
-    mkdir /mnt/vendor/persist 0700 root root
+    mkdir /mnt/vendor/persist 0755 root root
 	mount ext4 /dev/block/platform/bootdevice/by-name/protect1 /mnt/vendor/protect_f
 	mount ext4 /dev/block/platform/bootdevice/by-name/protect2 /mnt/vendor/protect_s
 	mount ext4 /dev/block/platform/bootdevice/by-name/nvdata /mnt/vendor/nvdata
@@ -17,6 +17,58 @@ on fs
     symlink /mnt/vendor/persist /vendor/persist
 	write /proc/bootprof "tkcore: prepare system ta path"
 	chown root root /vendor/app/t6
+    
+on post-fs
+    # change owner
+    chown system system /mnt/vendor/protect_f
+    chmod 0770 /mnt/vendor/protect_f
+
+    chown system system /mnt/vendor/protect_s
+    chmod 0770 /mnt/vendor/protect_s
+
+    chown system system /mnt/vendor/nvcfg
+    chmod 0771 /mnt/vendor/nvcfg
+    restorecon_recursive /mnt/vendor/nvcfg
+
+    chown root system /mnt/vendor/nvdata
+    chmod 0771 /mnt/vendor/nvdata
+    mkdir /mnt/vendor/nvdata/media 0771 media audio
+    restorecon_recursive /mnt/vendor/nvdata
+
+on post-fs-data
+    chown system system /mnt/vendor/nvcfg
+    chmod 0771 /mnt/vendor/nvcfg
+    restorecon_recursive /mnt/vendor/nvcfg
+    chown system system /mnt/vendor/nvcfg/fg
+    chown system system /mnt/vendor/nvcfg/fg/old_fg_data
+    chown system system /mnt/vendor/nvcfg/fg/car_tune_value
+
+    # create basic filesystem structure
+    # We chown/chmod /mnt/vendor/nvdata again so because mount is run as root + defaults
+    chown root system /mnt/vendor/nvdata
+    chmod 0771 /mnt/vendor/nvdata
+    mkdir /mnt/vendor/nvdata/media 0771 media audio
+
+    #Create cct mount point
+    mkdir /mnt/vendor/cct
+    chown root system /mnt/vendor/cct
+    chmod 0771 /mnt/vendor/cct
+
+    chown root system /mnt/vendor/apd
+    chmod 0771 /mnt/vendor/apd
+
+    # VIA flashlessd service
+    mkdir /mnt/vendor/nvdata/md_via 0770 root nvram
+
+    # Modem related device nodes
+    mkdir /mnt/vendor/nvdata/md  0770 root system
+    mkdir /mnt/vendor/nvdata/md2 0770 root system
+    mkdir /mnt/vendor/nvdata/md3 0770 root system
+
+    # Set SELinux security contexts on upgrade or policy update.
+    restorecon_recursive /mnt/vendor/nvdata
+    restorecon_recursive /mnt/vendor/protect_f
+    restorecon_recursive /mnt/vendor/protect_s    
 
 	write /proc/bootprof "tkcore: prepare protect_f sfs"
 	mkdir /mnt/vendor/protect_f/tee
