@@ -1,2 +1,18 @@
+# Default properties
 ro.product.board=v965
 ro.crypto.volume.filenames_mode=aes-256-cts
+ro.boot.dynamic_partitions=true
+ro.board.platform=mt6771
+ro.vendor.mediatek.platform=MT6771
+ro.hardware=mt6771
+ro.boot.hardware=mt6771
+ro.hardware.egl=mali
+ro.sf.lcd_density=300
+ro.treble.enabled=true
+# Recovery specific properties
+ro.secure=0
+ro.adb.secure=0
+ro.debuggable=1
+persist.sys.usb.config=mtp,adb
+persist.service.adb.enable=1
+persist.service.debuggable=1

@@ -103,26 +103,39 @@ BOARD_MKBOOTIMG_ARGS += --pagesize $(BOARD_KERNEL_PAGESIZE) --board ""
 # Hack to get keymaster to recognize the key files
 PLATFORM_SECURITY_PATCH := 2020-06-05
 VENDOR_SECURITY_PATCH := 2020-06-05
-PLATFORM_VERSION := 10
+#PLATFORM_VERSION := 11
 
 # Charger
 BOARD_CHARGER_ENABLE_SUSPEND := true
+
+# Metadata
+BOARD_USES_METADATA_PARTITION := true
+BOARD_ROOT_EXTRA_FOLDERS += metadata
 
 # Crypto
 TW_INCLUDE_CRYPTO := true
 TW_INCLUDE_CRYPTO_FBE := true
 TW_INCLUDE_FBE := true
-BOARD_USES_METADATA_PARTITION := true
-#TW_INCLUDE_FBE_METADATA_DECRYPT := true
-#USE_FSCRYPT := true
+TW_INCLUDE_FBE_METADATA_DECRYPT := true
 
+TARGET_RECOVERY_DEVICE_MODULES += libpuresoftkeymasterdevice
+TARGET_RECOVERY_DEVICE_MODULES += ashmemd_aidl_interface-cpp
+TARGET_RECOVERY_DEVICE_MODULES += libashmemd_client
+TW_RECOVERY_ADDITIONAL_RELINK_LIBRARY_FILES += $(TARGET_OUT_SHARED_LIBRARIES)/libpuresoftkeymasterdevice.so
+TW_RECOVERY_ADDITIONAL_RELINK_LIBRARY_FILES += $(TARGET_OUT_SHARED_LIBRARIES)/libashmemd_client.so 
+TW_RECOVERY_ADDITIONAL_RELINK_LIBRARY_FILES += $(TARGET_OUT_SHARED_LIBRARIES)/ashmemd_aidl_interface-cpp.so
+
+# Properties
+TARGET_SYSTEM_PROP += $(DEVICE_PATH)/system.prop
 
 # TWRP Configuration
-TARGET_RECOVERY_FSTAB := device/cubot/X30/twrp.fstab
+#TARGET_RECOVERY_FSTAB := device/cubot/X30/twrp.fstab
+TARGET_RECOVERY_INITRC := $(DEVICE_PATH)/recovery/root/init.recovery.mt6771.rc
+TW_EXCLUDE_DEFAULT_USB_INIT := true
 TW_CUSTOM_CPU_TEMP_PATH := /sys/devices/virtual/thermal/thermal_zone1/temp
 TARGET_RECOVERY_LCD_BACKLIGHT_PATH := \"/sys/class/leds/lcd-backlight/brightness\"
 TW_BRIGHTNESS_PATH := /sys/class/leds/lcd-backlight/brightness
-BOARD_USE_CUSTOM_RECOVERY_FONT := \"roboto_15x24.h\"
+BOARD_USE_CUSTOM_RECOVERY_FONT := roboto_15x24.h
 TW_MAX_BRIGHTNESS := 255
 TW_DEFAULT_BRIGHTNESS := 100
 TW_THEME := portrait_hdpi

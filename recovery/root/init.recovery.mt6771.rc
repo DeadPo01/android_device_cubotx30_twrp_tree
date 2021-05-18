@@ -1,33 +1,19 @@
-import /trustkernel.rc
+import /init.recovery.trustkernel.rc
+import /vendor/etc/init/trustkernel.rc
+import /vendor/etc/init/android.hardware.gatekeeper@1.0-service.rc
+import /vendor/etc/init/android.hardware.keymaster@4.0-service.trustkernel.rc
+import /vendor/etc/init/vendor.mediatek.hardware.keymaster_attestation@1.1-service.rc
 
-on init
-    # Create a more standard /dev/block layout for our scripts
-    symlink /dev/block/platform/bootdevice /dev/block/bootdevice
-     # Somehow AOSP build system hasn't provided a symlink here
-    symlink /system_root/system /system
-    symlink /system/etc /etc
-    
+service hwservicemanager /system/bin/hwservicemanager
+    user root
+    group root readproc
+    disabled
+    onrestart setprop hwservicemanager.ready false
+    seclabel u:r:recovery:s0
 
-on fs    
-    wait /dev/block/platform/bootdevice
-    # Create a more standard /dev/block layout for our scripts
-    symlink /dev/block/platform/bootdevice /dev/block/bootdevice    
-    export ANDROID_ROOT /system_root    
-    start hwservicemanager
-    install_keyring
-    setprop crypto.ready 1
-    
-on post-fs
-    # Support A/B feature for EMMC and UFS boot region
-    symlink /dev/block/sda /dev/block/mmcblk0boot0
-    symlink /dev/block/sdb /dev/block/mmcblk0boot1
-    symlink /dev/block/mmcblk0boot0 /dev/block/platform/bootdevice/by-name/preloader_a
-    symlink /dev/block/mmcblk0boot1 /dev/block/platform/bootdevice/by-name/preloader_b
-	
-service keystore_auth /system/bin/keystore_auth
-    oneshot
-    user system
-    group root
+service servicemanager /system/bin/servicemanager
+    user root
+    group root readproc
     disabled
     seclabel u:r:recovery:s0
 
@@ -36,60 +22,52 @@ service keystore /system/bin/keystore /tmp/misc/keystore
     group root drmrpc readproc
     disabled
     seclabel u:r:recovery:s0
-
-service vendor.gatekeeper-1-0 /vendor/bin/hw/android.hardware.gatekeeper@1.0-service
-    class hal
+    
+service keystore_auth /system/bin/keystore_auth
+    oneshot
     user root
     group root
     disabled
     seclabel u:r:recovery:s0
+    
+on fs
+    install_keyring
+    setprop crypto.ready 1
+    start hwservicemanager
+    start servicemanager
+        
+on post-fs
+    # Support A/B feature for EMMC and UFS boot region
+    symlink /dev/block/sda /dev/block/mmcblk0boot0
+    symlink /dev/block/sdb /dev/block/mmcblk0boot1
+    symlink /dev/block/mmcblk0boot0 /dev/block/platform/bootdevice/by-name/preloader_a
+    symlink /dev/block/mmcblk0boot1 /dev/block/platform/bootdevice/by-name/preloader_b
 
-service vendor.keymaster-4-0-trustkernel /vendor/bin/hw/android.hardware.keymaster@4.0-service
-	interface android.hardware.keymaster@4.0::IKeymasterDevice default
-    class early_hal
-    user root
-    group root drmpc
-    disabled
-    seclabel u:r:recovery:s0
-
-service keymaster_attestation-1-1 /vendor/bin/hw/vendor.mediatek.hardware.keymaster_attestation@1.1-service
-    interface vendor.mediatek.hardware.keymaster_attestation@1.1::IKeymasterDevice default
-    class hal
-    #user root
-    #group root
-    disabled
-    seclabel u:r:recovery:s0
-
-#on property:vendor.trustkernel.ready=true
+    # Support A/B feature for combo emmc and ufs OTA update
+    symlink /dev/block/platform/bootdevice/by-name/preloader_a /dev/block/platform/bootdevice/by-name/preloader_emmc_a
+    symlink /dev/block/platform/bootdevice/by-name/preloader_b /dev/block/platform/bootdevice/by-name/preloader_emmc_b
+    symlink /dev/block/platform/bootdevice/by-name/preloader_a /dev/block/platform/bootdevice/by-name/preloader_ufs_a
+    symlink /dev/block/platform/bootdevice/by-name/preloader_b /dev/block/platform/bootdevice/by-name/preloader_ufs_b
+   
 on property:hwservicemanager.ready=true
     start vendor.keymaster-4-0-trustkernel
     start vendor.gatekeeper-1-0
-	start keymaster_attestation-1-1
-
-on property:vendor.sys.listeners.registered=true
-    start vendor.keymaster-4-0-trustkernel
-    start vendor.gatekeeper-1-0
-    start servicemanager
-    start keymaster_attestation-1-1
-
-on property:crypto.ready=0
-    stop vendor.keymaster-4-0
-    stop vendor.gatekeeper-1-0    
-    stop keymaster_attestation-1-1
-    stop servicemanager
+    #start keymaster_attestation-1-1
     
 on property:ro.crypto.state=unsupported
     stop teed
-    stop vendor.keymaster-4-0
-    stop vendor.gatekeeper-1-0    
-    stop keymaster_attestation-1-1
-    stop servicemanager
-    stop hwservicemanager
+    stop vendor.keymaster-4-0-trustkernel
+    stop vendor.gatekeeper-1-0
+    #stop keymaster_attestation-1-1
 
 on property:ro.crypto.state=unencrypted
     stop teed
-    stop vendor.keymaster-4-0
-    stop vendor.gatekeeper-1-0    
-    stop keymaster_attestation-1-1
-    stop servicemanager
-    stop hwservicemanager
+    stop vendor.keymaster-4-0-trustkernel
+    stop vendor.gatekeeper-1-0
+    #stop keymaster_attestation-1-1
+
+on property:twrp.decrypt.done=true
+    stop teed
+    stop vendor.keymaster-4-0-trustkernel
+    stop vendor.gatekeeper-1-0
+    #stop keymaster_attestation-1-1
