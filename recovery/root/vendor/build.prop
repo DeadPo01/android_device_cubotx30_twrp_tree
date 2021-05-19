@@ -18,6 +18,7 @@ ro.vendor.build.type=user
 ro.vendor.build.version.incremental=20200603
 ro.vendor.build.version.release=10
 ro.vendor.build.version.sdk=29
+ro.build.version.sdk=29
 ro.product.vendor.brand=CUBOT
 ro.product.vendor.device=X30
 ro.product.vendor.manufacturer=CUBOT
