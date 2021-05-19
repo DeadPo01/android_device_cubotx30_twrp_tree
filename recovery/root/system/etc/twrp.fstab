@@ -1,0 +1,74 @@
+#
+# Cubot X30 by LobsterOK(4pda.ru)
+#
+# Android 10 = /system and /vendor in "super" partition.
+/system_root    ext4	/dev/block/mapper/system      flags=backup=1;display="System"
+/vendor         ext4    /dev/block/mapper/vendor      flags=backup=1;display="Vendor"
+/product        ext4    /dev/block/mapper/product     flags=backup=1;display="Product"
+
+#Metadata
+/md_udc 	    ext4	/dev/block/platform/bootdevice/by-name/md_udc           flags=backup=1
+
+#Common partitions
+/data		    ext4	/dev/block/platform/bootdevice/by-name/userdata         flags=fileencryption=aes-256-xts;backup=1
+/boot           emmc    /dev/block/bootdevice/by-name/boot    					flags=slotselect;backup=1;flashimg=1;display="Boot"
+/dtbo           emmc    /dev/block/platform/bootdevice/by-name/dtbo          	flags=backup=1;flashimg=1
+/cache		    ext4	/dev/block/platform/bootdevice/by-name/cache            flags=backup=1;wipeingui;wipeduringfactoryreset
+/recovery	    emmc	/dev/block/platform/bootdevice/by-name/recovery         flags=display="Recovery";backup=1;flashimg=1
+/persist        ext4    /dev/block/platform/bootdevice/by-name/persist          flags=display="Persist";backup=1
+/persist_image  emmc    /dev/block/platform/bootdevice/by-name/persist          flags=backup=1;display="Persist Image";flashimg=1
+/vbmeta         emmc    /dev/block/platform/bootdevice/by-name/vbmeta       	flags=display="Vbmeta";backup=1;flashimg=1
+/vbmeta_system  emmc    /dev/block/platform/bootdevice/by-name/vbmeta_system 	flags=backup=1;display="Vbmeta System";flashimg=1
+/vbmeta_vendor  emmc    /dev/block/platform/bootdevice/by-name/vbmeta_vendor 	flags=backup=1;display="Vbmeta Vendor";flashimg=1
+
+#Mediatek
+/bootloader     emmc	/dev/block/platform/bootdevice/by-name/lk               flags=backup=1;flashimg=1
+/bootloader2    emmc	/dev/block/platform/bootdevice/by-name/lk2              flags=backup=1;subpartitionof=/bootloader
+/logo			emmc	/dev/block/platform/bootdevice/by-name/logo             flags=backup=1;flashimg=1
+/misc		    emmc	/dev/block/platform/bootdevice/by-name/para             flags=display="Parameters"
+/expdb		    emmc	/dev/block/platform/bootdevice/by-name/expdb            flags=backup=1
+/seccfg		    emmc	/dev/block/platform/bootdevice/by-name/seccfg			flags=backup=1
+/boot_para	    emmc	/dev/block/platform/bootdevice/by-name/boot_para        flags=backup=1
+/proinfo	    emmc	/dev/block/platform/bootdevice/by-name/proinfo          flags=backup=1
+
+#NVM
+/nvcfg		    ext4	/dev/block/platform/bootdevice/by-name/nvcfg            flags=backup=1
+/nvdata		    ext4	/dev/block/platform/bootdevice/by-name/nvdata           flags=backup=1
+/nvram		 	emmc	/dev/block/platform/bootdevice/by-name/nvram           	flags=backup=1;flashimg=1
+
+#Protect
+/protect_f      ext4    /dev/block/platform/bootdevice/by-name/protect1	    	flags=backup=1
+/protect_s	    ext4	/dev/block/platform/bootdevice/by-name/protect2         flags=subpartitionof=/protect_f;backup=1
+
+#TEE
+/tee1			emmc	/dev/block/platform/bootdevice/by-name/tee1             flags=backup=1;flashimg=1;display="TEE"
+/tee2			emmc	/dev/block/platform/bootdevice/by-name/tee2             flags=backup=1;subpartitionof=/tee1
+
+#FRP
+/persistent	    emmc	/dev/block/platform/bootdevice/by-name/frp              flags=backup=1
+
+#GZ
+/gz1    	    emmc	/dev/block/platform/bootdevice/by-name/gz1              flags=backup=1
+/gz2    	    emmc	/dev/block/platform/bootdevice/by-name/gz2              flags=backup=1;subpartitionof=/gz1
+
+#Modem
+/md1img		    emmc	/dev/block/platform/bootdevice/by-name/md1img           flags=display="Modem";backup=1
+
+#SCP
+/scp1           emmc    /dev/block/platform/bootdevice/by-name/scp1             flags=backup=1
+/scp2           emmc    /dev/block/platform/bootdevice/by-name/scp2             flags=backup=1;subpartitionof=/scp1
+
+#VPU
+/cam_vpu1       emmc    /dev/block/platform/bootdevice/by-name/cam_vpu1         flags=backup=1
+/cam_vpu2       emmc    /dev/block/platform/bootdevice/by-name/cam_vpu2         flags=backup=1;subpartitionof=/cam_vpu1
+/cam_vpu3       emmc    /dev/block/platform/bootdevice/by-name/cam_vpu3         flags=backup=1;subpartitionof=/cam_vpu1
+
+#Other
+/spmfw		    emmc	/dev/block/platform/bootdevice/by-name/spmfw            flags=display="spm";backup=1
+/sspm_1		    emmc	/dev/block/platform/bootdevice/by-name/sspm_1           flags=backup=1;subpartitionof=/spmfw
+/sspm_2		    emmc	/dev/block/platform/bootdevice/by-name/sspm_2           flags=backup=1;subpartitionof=/spmfw
+
+
+#Ext
+/external_sd	auto	/dev/block/mmcblk0p1  /dev/block/mmcblk0            flags=display="external_sd";storage;wipeingui;removable;fsflags="utf8"
+/usb_otg	    auto    /dev/block/sdd4  /dev/block/sdd                     flags=display="usb-otg";storage;wipeingui;removable;fsflags="utf8"
