@@ -2,9 +2,12 @@
 # Cubot X30 by LobsterOK(4pda.ru)
 #
 # Android 10 = /system and /vendor in "super" partition.
-/system_root    ext4	/dev/block/mapper/system      flags=backup=1;display="System"
-/vendor         ext4    /dev/block/mapper/vendor      flags=backup=1;display="Vendor"
-/product        ext4    /dev/block/mapper/product     flags=backup=1;display="Product"
+/system         ext4    /dev/block/mapper/system      flags=backup=1;display="System";wipeingui
+/vendor         ext4    /dev/block/mapper/vendor      flags=backup=1;display="Vendor";wipeingui
+/product        ext4    /dev/block/mapper/product     flags=backup=1;display="Product";wipeingui
+/system         emmc    /dev/block/mapper/system      flags=backup=1;display="System_image";flashimg=1;wipeingui
+/vendor         emmc    /dev/block/mapper/vendor      flags=backup=1;display="Vendor_image";flashimg=1;wipeingui
+/product        emmc    /dev/block/mapper/product     flags=backup=1;display="Product_image";flashimg=1;wipeingui
 
 #Metadata
 /md_udc 	    ext4	/dev/block/platform/bootdevice/by-name/md_udc           flags=backup=1
