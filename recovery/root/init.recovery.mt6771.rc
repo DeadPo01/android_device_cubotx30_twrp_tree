@@ -4,13 +4,6 @@ import /vendor/etc/init/android.hardware.gatekeeper@1.0-service.rc
 import /vendor/etc/init/android.hardware.keymaster@4.0-service.trustkernel.rc
 import /vendor/etc/init/vendor.mediatek.hardware.keymaster_attestation@1.1-service.rc
 
-# Fix mount permission denied of Vendor and System by mount and unmount them
-mount /dev/block/mapper/system /system_root --rw
-mount /dev/block/mapper/vendor /vendor --rw
-umount /system_root
-umount /vendor
-# Fix mount permission denied of Vendor and System by mount and unmount them
-
 service hwservicemanager /system/bin/hwservicemanager
     user root
     group root readproc
