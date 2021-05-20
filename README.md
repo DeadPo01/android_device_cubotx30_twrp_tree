@@ -6,4 +6,4 @@ TWRP for Cubot x30 Android 10 MTK Helio P60.
 - MTP
 - OTG
 ## Big thanks to:
-- [ADeadTrousers](https://github.com/ADeadTrousers) for helping with decription.
+- [ADeadTrousers](https://github.com/ADeadTrousers) for helping with decryption.
